@@ -1,0 +1,56 @@
+{
+  "name": "tare",
+  "version": "0.1.0",
+  "description": "Local-first CLI for analyzing MCP context weight and tool ambiguity.",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "tare": "./dist/cli.js"
+  },
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "main": "./dist/index.js",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsx src/cli.ts",
+    "test": "vitest run",
+    "lint": "eslint src",
+    "format": "prettier --write src"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "cli",
+    "tokens",
+    "context"
+  ],
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "latest",
+    "commander": "latest",
+    "fast-glob": "latest",
+    "gpt-tokenizer": "latest",
+    "natural": "latest",
+    "picocolors": "latest",
+    "zod": "latest"
+  },
+  "devDependencies": {
+    "@types/natural": "latest",
+    "@types/node": "latest",
+    "eslint": "latest",
+    "prettier": "latest",
+    "tsup": "latest",
+    "tsx": "latest",
+    "typescript": "latest",
+    "typescript-eslint": "latest",
+    "vitest": "latest"
+  }
+}
