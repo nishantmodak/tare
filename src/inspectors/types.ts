@@ -42,6 +42,7 @@ export type InspectedServer = {
 
 export type InspectorOptions = {
   timeoutMs: number;
+  fetch?: typeof globalThis.fetch;
 };
 
 export type ToolContextPayload = {

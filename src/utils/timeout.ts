@@ -14,12 +14,14 @@ export async function withTimeout<T>(
   onTimeout?: () => void | Promise<void>
 ): Promise<T> {
   let timeout: NodeJS.Timeout | undefined;
+  let didTimeout = false;
+  let cleanup: Promise<void> | undefined;
 
   const timeoutPromise = new Promise<never>((_resolve, reject) => {
     timeout = setTimeout(() => {
-      void Promise.resolve(onTimeout?.()).finally(() => {
-        reject(new TimeoutError(`Timed out after ${timeoutMs}ms`, timeoutMs));
-      });
+      didTimeout = true;
+      cleanup = Promise.resolve(onTimeout?.()).then(() => undefined);
+      reject(new TimeoutError(`Timed out after ${timeoutMs}ms`, timeoutMs));
     }, timeoutMs);
   });
 
@@ -28,6 +30,9 @@ export async function withTimeout<T>(
   } finally {
     if (timeout) {
       clearTimeout(timeout);
+    }
+    if (didTimeout) {
+      await cleanup?.catch(() => undefined);
     }
   }
 }

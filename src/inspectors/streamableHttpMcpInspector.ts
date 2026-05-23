@@ -147,7 +147,8 @@ export async function inspectStreamableHttpServer(
   const transport = new StreamableHTTPClientTransport(url, {
     requestInit: {
       headers: headerResolution.headers
-    }
+    },
+    fetch: options.fetch
   });
   const client = new Client({ name: "tare", version: VERSION }, { capabilities: {} });
 

@@ -82,12 +82,17 @@ function failureWarnings(
   }
 
   if (isLikelyCredentialError(combined)) {
-    return [
+    const warnings = [
       "live inspection failed.",
       "The server may require credentials or failed during startup.",
       "Static config only sees command/args, not actual tool schemas.",
       "Token estimate for this server is insufficient."
     ];
+    const detail = safeStderr || safeError;
+    if (detail) {
+      warnings.push(`Sanitized error: ${detail}`);
+    }
+    return warnings;
   }
 
   const detail = safeStderr || safeError;

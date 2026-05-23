@@ -8,10 +8,18 @@ export default tseslint.config(
     ignores: ["dist"]
   },
   {
-    files: ["src/**/*.ts"],
+    files: ["src/**/*.{ts,mjs}"],
     languageOptions: {
       ecmaVersion: 2022,
-      sourceType: "module"
+      sourceType: "module",
+      globals: {
+        Buffer: "readonly",
+        console: "readonly",
+        fetch: "readonly",
+        process: "readonly",
+        Response: "readonly",
+        URL: "readonly"
+      }
     },
     rules: {
       "@typescript-eslint/no-explicit-any": "off",
