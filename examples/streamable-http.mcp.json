@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "last9": {
+      "url": "https://mcp.last9.io/mcp",
+      "headers": {
+        "Authorization": "Bearer ${LAST9_MCP_TOKEN}"
+      }
+    }
+  }
+}
