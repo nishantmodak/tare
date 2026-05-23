@@ -4,7 +4,12 @@ import { VERSION } from "../version.js";
 import { collectSecretValues, isLikelyCredentialError, redactText } from "../utils/redact.js";
 import { formatTimeout, TimeoutError, withTimeout } from "../utils/timeout.js";
 import { createStaticInspection } from "./staticInspector.js";
-import type { InspectorOptions, InspectedServer, McpToolDefinition, NormalizedServer } from "./types.js";
+import type {
+  InspectorOptions,
+  InspectedServer,
+  McpToolDefinition,
+  NormalizedServer
+} from "./types.js";
 
 const EXCLUDED_TARE_ENV = new Set([
   "ANTHROPIC_API_KEY",

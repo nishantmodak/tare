@@ -8,7 +8,12 @@ import { resolveHeaderEnv } from "../utils/envInterpolation.js";
 import { collectSecretValues, redactText } from "../utils/redact.js";
 import { formatTimeout, TimeoutError, withTimeout } from "../utils/timeout.js";
 import { createStaticInspection } from "./staticInspector.js";
-import type { InspectorOptions, InspectedServer, McpToolDefinition, NormalizedServer } from "./types.js";
+import type {
+  InspectorOptions,
+  InspectedServer,
+  McpToolDefinition,
+  NormalizedServer
+} from "./types.js";
 
 type SdkTool = {
   name: string;
@@ -127,8 +132,9 @@ export async function inspectStreamableHttpServer(
   if (!headerResolution.ok) {
     const firstMissing = headerResolution.missing[0] ?? "unknown";
     const headerName =
-      Object.keys(server.headers ?? {}).find((key) => (server.headers?.[key] ?? "").includes(firstMissing)) ??
-      "configured";
+      Object.keys(server.headers ?? {}).find((key) =>
+        (server.headers?.[key] ?? "").includes(firstMissing)
+      ) ?? "configured";
 
     return createStaticInspection(server, "fallback-static-insufficient", [
       `missing environment variable ${firstMissing} for ${headerName} header.`,

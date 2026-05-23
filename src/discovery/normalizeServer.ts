@@ -23,7 +23,9 @@ function readStringRecord(value: unknown): Record<string, string> | undefined {
   }
 
   const entries = Object.entries(value as Record<string, unknown>);
-  const strings = entries.filter((entry): entry is [string, string] => typeof entry[1] === "string");
+  const strings = entries.filter(
+    (entry): entry is [string, string] => typeof entry[1] === "string"
+  );
   return strings.length === entries.length ? Object.fromEntries(strings) : undefined;
 }
 
@@ -71,19 +73,27 @@ export function normalizeServer(
   const headers = readStringRecord(config.headers);
 
   if (config.args !== undefined && !args) {
-    warnings.push(`${sourceConfigPath}: server "${name}" has non-string args and they were ignored.`);
+    warnings.push(
+      `${sourceConfigPath}: server "${name}" has non-string args and they were ignored.`
+    );
   }
 
   if (config.env !== undefined && !env) {
-    warnings.push(`${sourceConfigPath}: server "${name}" has non-string env values and env was ignored.`);
+    warnings.push(
+      `${sourceConfigPath}: server "${name}" has non-string env values and env was ignored.`
+    );
   }
 
   if (config.headers !== undefined && !headers) {
-    warnings.push(`${sourceConfigPath}: server "${name}" has non-string headers and headers were ignored.`);
+    warnings.push(
+      `${sourceConfigPath}: server "${name}" has non-string headers and headers were ignored.`
+    );
   }
 
   if (!command && !url) {
-    warnings.push(`${sourceConfigPath}: server "${name}" has no command or url; transport is unknown.`);
+    warnings.push(
+      `${sourceConfigPath}: server "${name}" has no command or url; transport is unknown.`
+    );
   }
 
   return {

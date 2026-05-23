@@ -11,7 +11,10 @@ export type ParsedConfig = {
   warnings: string[];
 };
 
-function readServerMap(raw: Record<string, unknown>, keyPath: string): Record<string, unknown> | undefined {
+function readServerMap(
+  raw: Record<string, unknown>,
+  keyPath: string
+): Record<string, unknown> | undefined {
   const segments = keyPath.split(".");
   let current: unknown = raw;
 

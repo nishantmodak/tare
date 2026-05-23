@@ -2,10 +2,7 @@ export type TransportKind = "stdio" | "streamable-http" | "http" | "sse" | "unkn
 
 export type ReportTransportKind = "stdio" | "streamable-http" | "sse" | "unknown";
 
-export type InspectionMode =
-  | "live"
-  | "static-insufficient"
-  | "fallback-static-insufficient";
+export type InspectionMode = "live" | "static-insufficient" | "fallback-static-insufficient";
 
 export type Confidence = "high" | "medium" | "low";
 
