@@ -1,8 +1,8 @@
-name: Publish to npm
+name: Node.js Package
 
 on:
   release:
-    types: [published]
+    types: [created]
   workflow_dispatch:
 
 permissions:
@@ -10,7 +10,7 @@ permissions:
   id-token: write
 
 jobs:
-  publish:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -30,6 +30,28 @@ jobs:
       - run: pnpm test
       - run: pnpm run lint
       - run: pnpm build
+      - run: npm pack --dry-run
+
+  publish-npm:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.32.1
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://registry.npmjs.org
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: npm pack --dry-run
 
       - run: npm publish --access public --provenance
         env:

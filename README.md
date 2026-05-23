@@ -25,6 +25,26 @@ du -sh node_modules
 
 but for agent tool context.
 
+## Table of Contents
+
+- [Why This Matters](#why-this-matters)
+- [Why Token Count Is Not the Whole Problem](#why-token-count-is-not-the-whole-problem)
+- [Quickstart](#quickstart)
+- [Hosted MCP Quickstart](#hosted-mcp-quickstart)
+- [Scenario Examples](#scenario-examples)
+- [Example Output](#example-output)
+- [Supported Transports](#supported-transports)
+- [Static vs Live Inspection](#static-vs-live-inspection)
+- [Accuracy](#accuracy)
+- [Security Model](#security-model)
+- [Config Discovery](#config-discovery)
+- [JSON Usage](#json-usage)
+- [CI Usage](#ci-usage)
+- [Publishing to npm](#publishing-to-npm)
+- [CLI](#cli)
+- [Roadmap](#roadmap)
+- [License](#license)
+
 ## Why this matters
 
 Every MCP tool is context the model has to carry before it can act. Large tool lists and verbose schemas reduce the room left for the actual task, and they can make routing decisions noisier.
@@ -54,19 +74,26 @@ After the package is published:
 npx tare-mcp
 ```
 
+Install it in a project:
+
+```bash
+npm install --save-dev tare-mcp
+npx tare-mcp
+```
+
+Install it globally:
+
+```bash
+npm install --global tare-mcp
+tare-mcp
+```
+
 For local development from this repository:
 
 ```bash
 pnpm install
 pnpm build
 pnpm dev
-```
-
-Run against your local MCP configuration after installing it into a project:
-
-```bash
-npm install --save-dev tare-mcp
-npx tare-mcp
 ```
 
 Static-only mode parses config without starting servers or calling hosted endpoints:
@@ -88,24 +115,70 @@ Emit JSON for CI or other tools:
 npx tare-mcp --json
 ```
 
-## Quick live example
+## Hosted MCP Quickstart
 
-The repository includes a no-credentials stdio MCP server you can inspect live.
+Use this when you want to inspect a real hosted MCP endpoint.
+
+```bash
+mkdir -p /tmp/tare-mcp-hosted
+cd /tmp/tare-mcp-hosted
+cp /path/to/tare-mcp/examples/scenarios/hosted-streamable-http.mcp.json .mcp.json
+export LAST9_MCP_TOKEN="..."
+npx tare-mcp --timeout 10000
+```
+
+The hosted example config points at:
+
+```txt
+https://mcp.last9.io/mcp
+```
+
+If the token is missing or invalid, `tare-mcp` reports a `401 Unauthorized` fallback instead of crashing. To use a different hosted MCP server, edit the `url` and `headers` in `.mcp.json`.
+
+Expected shape with valid credentials:
+
+```txt
+Inspecting last9 via streamable-http...
+
+tare-mcp — MCP context weight
+
+Config files found: 1
+Servers analyzed: 1
+Inspection mode: live default
+Tools exposed: ...
+```
+
+## Scenario Examples
+
+Scenario files live in [`examples/scenarios`](examples/scenarios):
+
+- [`hosted-streamable-http.mcp.json`](examples/scenarios/hosted-streamable-http.mcp.json): hosted Streamable HTTP MCP with bearer-token auth.
+- [`local-stdio.mcp.json`](examples/scenarios/local-stdio.mcp.json): packaged stdio MCP server.
+- [`examples/scenarios/README.md`](examples/scenarios/README.md): copy-paste commands for each scenario.
+
+For a no-credentials local Streamable HTTP smoke test, use [`examples/live-streamable-http`](examples/live-streamable-http):
 
 ```bash
 pnpm install
 pnpm build
-cd examples/live-stdio
+cd examples/live-streamable-http
+node server.mjs
+```
+
+Then in another terminal:
+
+```bash
+cd examples/live-streamable-http
 mkdir -p .home
 HOME="$PWD/.home" node ../../dist/cli.js
 ```
 
-The temporary `HOME` keeps the example focused on `examples/live-stdio/.mcp.json` instead of mixing in your real Claude or editor MCP configs.
+The temporary `HOME` keeps local smoke tests focused on the example `.mcp.json` instead of mixing in your real Claude or editor MCP configs.
 
-Expected shape:
+Expected local smoke-test shape:
 
 ```txt
-Inspecting tare-live-example via stdio...
+Inspecting tare-live-http-example via streamable-http...
 
 tare-mcp — MCP context weight
 
@@ -115,11 +188,11 @@ Inspection mode: live default
 Tools exposed: 2
 
 Worst servers:
-1. tare-live-example ...
+1. tare-live-http-example ...
 
 Worst tools:
-1. tare-live-example.summarize_text ...
-2. tare-live-example.echo ...
+1. tare-live-http-example.search_docs ...
+2. tare-live-http-example.read_doc ...
 ```
 
 ## Example output
@@ -245,6 +318,7 @@ Use `--no-exec` for static-only mode, but note that static-only mode is insuffic
 ./mcp.json
 ./.cursor/mcp.json
 ./.vscode/mcp.json
+~/.claude/mcp.json
 ~/Library/Application Support/Claude/claude_desktop_config.json
 ~/.config/Claude/claude_desktop_config.json
 ~/.config/claude/claude_desktop_config.json
@@ -337,6 +411,7 @@ pnpm install --frozen-lockfile
 pnpm test
 pnpm run lint
 pnpm build
+npm pack --dry-run
 npm publish --access public --provenance
 ```
 
