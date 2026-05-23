@@ -4,6 +4,7 @@
   "description": "Local-first CLI for analyzing MCP context weight and tool ambiguity.",
   "license": "MIT",
   "type": "module",
+  "packageManager": "pnpm@10.32.1",
   "bin": {
     "tare": "./dist/cli.js"
   },
@@ -13,9 +14,13 @@
   "main": "./dist/index.js",
   "files": [
     "dist",
+    "examples",
     "README.md",
     "LICENSE"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "engines": {
     "node": ">=20"
   },

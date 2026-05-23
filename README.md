@@ -48,6 +48,14 @@ If three servers all expose tools that look like "search", the model has to choo
 
 ## Quickstart
 
+After the package is published:
+
+```bash
+npx tare
+```
+
+For local development from this repository:
+
 ```bash
 pnpm install
 pnpm build
@@ -77,6 +85,40 @@ Emit JSON for CI or other tools:
 
 ```bash
 npx tare --json
+```
+
+## Quick live example
+
+The repository includes a no-credentials stdio MCP server you can inspect live.
+
+```bash
+pnpm install
+pnpm build
+cd examples/live-stdio
+mkdir -p .home
+HOME="$PWD/.home" node ../../dist/cli.js
+```
+
+The temporary `HOME` keeps the example focused on `examples/live-stdio/.mcp.json` instead of mixing in your real Claude or editor MCP configs.
+
+Expected shape:
+
+```txt
+Inspecting tare-live-example via stdio...
+
+tare — MCP context weight
+
+Config files found: 1
+Servers analyzed: 1
+Inspection mode: live default
+Tools exposed: 2
+
+Worst servers:
+1. tare-live-example ...
+
+Worst tools:
+1. tare-live-example.summarize_text ...
+2. tare-live-example.echo ...
 ```
 
 ## Example output
@@ -275,6 +317,57 @@ For CI systems that should not execute local MCP server commands, use static-onl
 
 ```bash
 npx tare --no-exec --json
+```
+
+## Publishing to npm
+
+This repository includes [`.github/workflows/publish-npm.yml`](.github/workflows/publish-npm.yml).
+
+To publish from GitHub Actions:
+
+1. Create an npm automation token.
+2. Add it to the repository as `NPM_TOKEN`.
+3. Publish a GitHub release or run the workflow manually.
+
+The workflow runs:
+
+```bash
+pnpm install --frozen-lockfile
+pnpm test
+pnpm run lint
+pnpm build
+npm publish --access public --provenance
+```
+
+If you control the unscoped npm package name `tare`, users can install it with:
+
+```bash
+npm install --save-dev tare
+npx tare
+```
+
+If you do not control the unscoped npm name, publish under a scope instead:
+
+```json
+{
+  "name": "@nishantmodak/tare",
+  "bin": {
+    "tare": "./dist/cli.js"
+  }
+}
+```
+
+Then users can run:
+
+```bash
+npm install --save-dev @nishantmodak/tare
+npx tare
+```
+
+or one-off:
+
+```bash
+npx @nishantmodak/tare
 ```
 
 ## CLI

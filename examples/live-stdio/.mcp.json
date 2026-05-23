@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "tare-live-example": {
+      "command": "node",
+      "args": ["./server.mjs"]
+    }
+  }
+}
