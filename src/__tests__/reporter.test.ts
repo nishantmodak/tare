@@ -61,7 +61,7 @@ const report: TareReport = {
       recommendation: "Prefer one search surface per workflow."
     }
   ],
-  recommendations: [{ type: "budget", message: "Use `tare --budget 40000`." }],
+  recommendations: [{ type: "budget", message: "Use `tare-mcp --budget 40000`." }],
   warnings: [],
   metadata: { staticOnly: true, inspectionMode: "static-only" }
 };

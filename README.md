@@ -1,4 +1,4 @@
-# tare
+# tare-mcp
 
 See what your MCP tools weigh before your agent does anything.
 
@@ -9,7 +9,7 @@ npx tare-mcp
 MCP made tools easy to connect.
 It did not make them cheap to carry.
 
-`tare` inspects your MCP setup and shows:
+`tare-mcp` inspects your MCP setup and shows:
 
 - how many tools your agent sees
 - how much context those tools consume
@@ -29,7 +29,7 @@ but for agent tool context.
 
 Every MCP tool is context the model has to carry before it can act. Large tool lists and verbose schemas reduce the room left for the actual task, and they can make routing decisions noisier.
 
-`tare` makes that weight visible locally, before a coding agent or assistant spends any of its working context on it.
+`tare-mcp` makes that weight visible locally, before a coding agent or assistant spends any of its working context on it.
 
 ## Why token count is not the whole problem
 
@@ -41,7 +41,7 @@ Second, it creates ambiguity.
 
 If three servers all expose tools that look like "search", the model has to choose between them before it can do useful work.
 
-`tare` shows both:
+`tare-mcp` shows both:
 
 - what your tools weigh
 - where your tools overlap
@@ -66,7 +66,7 @@ Run against your local MCP configuration after installing it into a project:
 
 ```bash
 npm install --save-dev tare-mcp
-npx tare
+npx tare-mcp
 ```
 
 Static-only mode parses config without starting servers or calling hosted endpoints:
@@ -107,7 +107,7 @@ Expected shape:
 ```txt
 Inspecting tare-live-example via stdio...
 
-tare — MCP context weight
+tare-mcp — MCP context weight
 
 Config files found: 1
 Servers analyzed: 1
@@ -125,7 +125,7 @@ Worst tools:
 ## Example output
 
 ```txt
-tare — MCP context weight
+tare-mcp — MCP context weight
 
 MCP made tools easy to connect. It did not make them cheap to carry.
 
@@ -177,8 +177,8 @@ Recommendations:
 - Prefer read-only profiles for common workflows.
 - Avoid exposing multiple tools for the same intent unless needed.
 - Disable rarely used write/admin tools.
-- Use `tare --budget 40000` to enforce a context budget.
-- Use `tare --json` to track this in CI.
+- Use `tare-mcp --budget 40000` to enforce a context budget.
+- Use `tare-mcp --json` to track this in CI.
 ```
 
 ## Supported transports
@@ -190,7 +190,7 @@ v0.1 supports live inspection for:
 
 SSE may be supported best-effort later.
 
-If a server cannot be inspected because credentials are missing, the endpoint is wrong, or the transport is unsupported, `tare` falls back to static-insufficient mode and says so clearly.
+If a server cannot be inspected because credentials are missing, the endpoint is wrong, or the transport is unsupported, `tare-mcp` falls back to static-insufficient mode and says so clearly.
 
 ## Static vs live inspection
 
@@ -210,11 +210,11 @@ Static-only mode is insufficient for packaged or hosted MCP servers because conf
 
 ## Accuracy
 
-`tare` reports estimates, not exact truth.
+`tare-mcp` reports estimates, not exact truth.
 
 Live inspection shows the actual tool definitions exposed by your MCP servers at inspection time.
 
-Token counts are still model-dependent. `tare` shows both Claude and OpenAI cl100k estimates where possible.
+Token counts are still model-dependent. `tare-mcp` shows both Claude and OpenAI cl100k estimates where possible.
 
 By default, Claude token counts are local approximations. API-backed Claude token counting is optional and must be explicitly enabled:
 
@@ -226,7 +226,7 @@ That mode requires `ANTHROPIC_API_KEY` and uses Anthropic's `POST /v1/messages/c
 
 ## Security model
 
-`tare` is local-first.
+`tare-mcp` is local-first.
 
 By default, it does not call cloud tokenization APIs.
 
@@ -234,11 +234,11 @@ Live inspection does execute configured stdio MCP server commands and calls conf
 
 Use `--no-exec` for static-only mode, but note that static-only mode is insufficient for packaged or hosted MCP servers because it cannot see exposed tool schemas.
 
-`tare` redacts environment variable values and header values in logs, warnings, JSON, and errors.
+`tare-mcp` redacts environment variable values and header values in logs, warnings, JSON, and errors.
 
 ## Config discovery
 
-`tare` discovers MCP configs from common locations:
+`tare-mcp` discovers MCP configs from common locations:
 
 ```txt
 ./.mcp.json
@@ -346,7 +346,7 @@ Users can install it with:
 
 ```bash
 npm install --save-dev tare-mcp
-npx tare
+npx tare-mcp
 ```
 
 For one-off usage:
@@ -355,17 +355,17 @@ For one-off usage:
 npx tare-mcp
 ```
 
-The installed binary is still named `tare`, so global installs work as `tare`:
+The installed binary is named `tare-mcp`, so global installs work as `tare-mcp`:
 
 ```bash
 npm install --global tare-mcp
-tare
+tare-mcp
 ```
 
 ## CLI
 
 ```txt
-Usage: tare [options]
+Usage: tare-mcp [options]
 
 Analyze MCP context weight and tool ambiguity.
 
@@ -392,7 +392,7 @@ Options:
 - [ ] HTML reports
 - [ ] Compare mode
 - [ ] MCP profile generator
-- [ ] `tare --fix` to generate lean MCP profiles
+- [ ] `tare-mcp --fix` to generate lean MCP profiles
 
 Compare mode, dashboards, profile generation, and auto-fix are intentionally not part of v0.1.
 

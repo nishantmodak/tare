@@ -125,7 +125,7 @@ export async function inspectStdioServer(
     env: buildServerEnv(server),
     stderr: "pipe"
   });
-  const client = new Client({ name: "tare", version: VERSION }, { capabilities: {} });
+  const client = new Client({ name: "tare-mcp", version: VERSION }, { capabilities: {} });
   let stderr = "";
 
   transport.stderr?.on("data", (chunk: Buffer | string) => {

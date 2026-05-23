@@ -37,11 +37,11 @@ export function buildRecommendations(
     },
     {
       type: "budget",
-      message: "Use `tare --budget 40000` to enforce a context budget."
+      message: "Use `tare-mcp --budget 40000` to enforce a context budget."
     },
     {
       type: "ci",
-      message: "Use `tare --json` to track this in CI."
+      message: "Use `tare-mcp --json` to track this in CI."
     }
   );
 

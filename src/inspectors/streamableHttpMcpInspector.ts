@@ -150,7 +150,7 @@ export async function inspectStreamableHttpServer(
     },
     fetch: options.fetch
   });
-  const client = new Client({ name: "tare", version: VERSION }, { capabilities: {} });
+  const client = new Client({ name: "tare-mcp", version: VERSION }, { capabilities: {} });
 
   const close = async () => {
     await client.close().catch(() => undefined);

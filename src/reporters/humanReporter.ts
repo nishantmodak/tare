@@ -32,7 +32,7 @@ function allTools(report: TareReport): Array<{
 export function renderHumanReport(report: TareReport): string {
   const lines: string[] = [];
 
-  lines.push(pc.bold("tare — MCP context weight"));
+  lines.push(pc.bold("tare-mcp — MCP context weight"));
   lines.push("");
   lines.push("MCP made tools easy to connect. It did not make them cheap to carry.");
   lines.push("");

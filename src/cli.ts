@@ -153,7 +153,7 @@ export function createProgram(): Command {
   const program = new Command();
 
   program
-    .name("tare")
+    .name("tare-mcp")
     .description(
       [
         "Analyze MCP context weight and tool ambiguity.",
