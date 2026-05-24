@@ -41,6 +41,15 @@ Use the CLI when you want to inspect config-discovered MCP servers locally:
 npx tare-mcp
 ```
 
+Choose the mode that matches where your MCP tools exist:
+
+| Use case                                  | Use                                    |
+| ----------------------------------------- | -------------------------------------- |
+| Running agent already has tools in memory | `measureTools()`                       |
+| Local MCP config audit                    | `npx tare-mcp`                         |
+| PR regression checks                      | `tare-mcp --json` plus `tare-mcp diff` |
+| Hosted MCP endpoint smoke test            | `npx tare-mcp --timeout 10000`         |
+
 Think of it as `du -sh node_modules`, but for agent tool context.
 
 ## Table of Contents
@@ -102,6 +111,8 @@ console.log(
   `MCP tool surface: ${report.summary.tools} tools, ~${report.summary.estimatedTokens.claude} Claude tokens`
 );
 ```
+
+`measureTools()` returns the same `TareReport` shape as CLI JSON output, so reports can be logged, stored, or compared later with `tare-mcp diff`.
 
 For multiple MCP servers, add `server` per tool so overlap warnings and per-server totals remain useful:
 
