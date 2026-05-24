@@ -7,35 +7,49 @@
 See what your MCP tools weigh before your agent does anything.
 
 ```bash
-pnpm install
-pnpm build
-node dist/cli.js
+npx tare-mcp
 ```
 
 MCP made tools easy to connect.
 It did not make them cheap to carry.
 
-`tare-mcp` inspects your MCP setup and shows:
+`tare-mcp` inspects your MCP setup and shows, in one local run:
 
 - how many tools your agent sees
-- how much context those tools consume
+- how much context those tools consume, estimated for Claude and OpenAI cl100k
 - which servers dominate the budget
 - which tools overlap and compete for model attention
 - whether your setup exceeds a context budget
 
-Think of it as:
+Use it once to see the current cost:
 
 ```bash
-du -sh node_modules
+npx tare-mcp
 ```
 
-but for agent tool context.
+Use it in CI to catch MCP bloat before merge:
+
+```bash
+# one time
+mkdir -p .tare
+npx tare-mcp --json > .tare/baseline.json
+git add .tare/baseline.json
+
+# on every PR
+npx tare-mcp --json > tare-report.json
+npx tare-mcp diff \
+  --base .tare/baseline.json \
+  --head tare-report.json \
+  --max-token-increase 5000 \
+  --max-tool-increase 20
+```
+
+Think of it as `du -sh node_modules`, but for agent tool context.
 
 ## Table of Contents
 
 - [Why This Matters](#why-this-matters)
 - [Why Token Count Is Not the Whole Problem](#why-token-count-is-not-the-whole-problem)
-- [Current Status](#current-status)
 - [Quickstart](#quickstart)
 - [Hosted MCP Quickstart](#hosted-mcp-quickstart)
 - [Scenario Examples](#scenario-examples)
@@ -74,25 +88,9 @@ If three servers all expose tools that look like "search", the model has to choo
 - what your tools weigh
 - where your tools overlap
 
-## Current status
-
-Current repository version: `0.2.0`.
-
-The CLI is implemented as `tare-mcp`, and the package is configured for npm as `tare-mcp`. Until the first npm release is published, run it from this repository with `node dist/cli.js` after building. Once published, the same commands work through `npx tare-mcp` or an npm install.
-
-Most examples below use `npx tare-mcp` because that is the intended published interface. Before the first npm release, replace `npx tare-mcp` with `node /path/to/tare-mcp/dist/cli.js`.
-
 ## Quickstart
 
-Run from source:
-
-```bash
-pnpm install
-pnpm build
-node dist/cli.js
-```
-
-After the npm package is published:
+Run it without installing:
 
 ```bash
 npx tare-mcp
@@ -120,24 +118,18 @@ Context window usage:
 
 If the output is empty or shows "Config files found: 0", see [Config discovery](#config-discovery).
 
-Install it in a project after the npm release:
+Install it in a project:
 
 ```bash
 npm install --save-dev tare-mcp
 npx tare-mcp
 ```
 
-Install it globally after the npm release:
+Install it globally:
 
 ```bash
 npm install --global tare-mcp
 tare-mcp
-```
-
-For local development, keep using the source command:
-
-```bash
-pnpm dev
 ```
 
 Static-only mode parses config without starting servers or calling hosted endpoints:
@@ -159,6 +151,14 @@ Emit JSON for CI or other tools:
 npx tare-mcp --json
 ```
 
+For local development from this repository:
+
+```bash
+pnpm install
+pnpm build
+pnpm dev
+```
+
 ## Hosted MCP Quickstart
 
 Use this when you want to inspect a real hosted MCP endpoint.
@@ -166,7 +166,19 @@ Use this when you want to inspect a real hosted MCP endpoint.
 ```bash
 mkdir -p /tmp/tare-mcp-hosted
 cd /tmp/tare-mcp-hosted
-cp /path/to/tare-mcp/examples/scenarios/hosted-streamable-http.mcp.json .mcp.json
+cat > .mcp.json <<'JSON'
+{
+  "mcpServers": {
+    "last9": {
+      "type": "http",
+      "url": "https://mcp.last9.io/mcp",
+      "headers": {
+        "Authorization": "Bearer ${LAST9_MCP_TOKEN}"
+      }
+    }
+  }
+}
+JSON
 export LAST9_MCP_TOKEN="..."
 npx tare-mcp --timeout 10000
 ```
@@ -587,7 +599,7 @@ npm publish --access public --provenance
 
 The npm package is named `tare-mcp` because the unscoped `tare` package name is already occupied on npm.
 
-After the first npm release, users can install it with:
+Users can install it with:
 
 ```bash
 npm install --save-dev tare-mcp
