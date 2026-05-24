@@ -1,5 +1,9 @@
 # tare-mcp
 
+[![Build](https://github.com/nishantmodak/tare-mcp/actions/workflows/publish-npm.yml/badge.svg)](https://github.com/nishantmodak/tare-mcp/actions/workflows/publish-npm.yml)
+[![Version](https://img.shields.io/github/package-json/v/nishantmodak/tare-mcp?label=version)](package.json)
+[![npm](https://img.shields.io/npm/v/tare-mcp?label=npm)](https://www.npmjs.com/package/tare-mcp)
+
 See what your MCP tools weigh before your agent does anything.
 
 ```bash
