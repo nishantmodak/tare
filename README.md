@@ -57,6 +57,7 @@ Think of it as `du -sh node_modules`, but for agent tool context.
 - [Supported Transports](#supported-transports)
 - [Static vs Live Inspection](#static-vs-live-inspection)
 - [Accuracy](#accuracy)
+- [Using tare-mcp in your agent](#using-tare-mcp-in-your-agent)
 - [Security Model](#security-model)
 - [Config Discovery](#config-discovery)
 - [JSON Usage](#json-usage)
@@ -314,10 +315,11 @@ Recommendations:
 
 ## Supported transports
 
-v0.2 supports live inspection for:
+v0.3 supports:
 
 - stdio MCP servers
 - Streamable HTTP MCP servers
+- programmatic tool definitions through `measureTools()`
 
 SSE may be supported best-effort later.
 
@@ -357,12 +359,85 @@ That mode requires `ANTHROPIC_API_KEY` and uses Anthropic's `POST /v1/messages/c
 
 Environment variables that control tokenization:
 
-| Variable | Values | Default | Description |
-|---|---|---|---|
-| `ANTHROPIC_API_KEY` | string | — | Required for `--claude-tokenizer api` |
-| `TARE_CLAUDE_TOKENIZER` | `local`, `api` | `local` | Override `--claude-tokenizer` via env |
-| `TARE_ANTHROPIC_MODEL` | model ID | `claude-sonnet-4-6` | Model used for API-backed token counting |
-| `TARE_DISABLE_ANTHROPIC_TOKEN_API` | `1` | unset | Disable API-backed counting even when requested |
+| Variable                           | Values         | Default             | Description                                     |
+| ---------------------------------- | -------------- | ------------------- | ----------------------------------------------- |
+| `ANTHROPIC_API_KEY`                | string         | —                   | Required for `--claude-tokenizer api`           |
+| `TARE_CLAUDE_TOKENIZER`            | `local`, `api` | `local`             | Override `--claude-tokenizer` via env           |
+| `TARE_ANTHROPIC_MODEL`             | model ID       | `claude-sonnet-4-6` | Model used for API-backed token counting        |
+| `TARE_DISABLE_ANTHROPIC_TOKEN_API` | `1`            | unset               | Disable API-backed counting even when requested |
+
+## Using tare-mcp in your agent
+
+Production agents often do not have a stable `.mcp.json` file to inspect. They connect to MCP servers, call `tools/list`, and pass those tool definitions to the model on each request.
+
+Use `measureTools()` when you already have the tool definitions in memory:
+
+```ts
+import { measureTools } from "tare-mcp";
+
+const tools = await mcpClient.listTools();
+const report = await measureTools(tools);
+
+console.log(
+  `MCP tool surface: ${report.summary.tools} tools, ~${report.summary.estimatedTokens.claude} Claude tokens`
+);
+```
+
+For multiple MCP servers, add `server` per tool so overlap warnings and per-server totals remain useful:
+
+```ts
+import { measureTools } from "tare-mcp";
+
+const last9Tools = await last9Client.listTools();
+const githubTools = await githubClient.listTools();
+
+const report = await measureTools([
+  ...last9Tools.map((tool) => ({ ...tool, server: "last9" })),
+  ...githubTools.map((tool) => ({ ...tool, server: "github" }))
+]);
+```
+
+For unattributed tools, pass a fallback server name:
+
+```ts
+const report = await measureTools(tools, {
+  serverName: "agent"
+});
+```
+
+Budget checks are metadata, not exceptions. That keeps the library easy to use in request paths, logs, and CI:
+
+```ts
+const report = await measureTools(tools, { budget: 40_000 });
+
+if (report.metadata.budgetExceeded) {
+  throw new Error(
+    `MCP tool surface exceeds budget: ~${report.summary.estimatedTokens.claude} Claude tokens`
+  );
+}
+```
+
+Structured logging example:
+
+```ts
+logger.info("mcp.tool_surface", {
+  tools: report.summary.tools,
+  servers: report.summary.servers,
+  tokens_claude: report.summary.estimatedTokens.claude,
+  tokens_openai_cl100k: report.summary.estimatedTokens.openaiCl100k,
+  overlap_clusters: report.overlapClusters.length,
+  budget_exceeded: report.metadata.budgetExceeded ?? false
+});
+```
+
+The programmatic API is local-first. It does not read config files, spawn MCP servers, or call cloud tokenization APIs by default. API-backed Claude token counting is opt-in:
+
+```ts
+const report = await measureTools(tools, {
+  claudeTokenizerMode: "api",
+  anthropicApiKey: process.env.ANTHROPIC_API_KEY
+});
+```
 
 ## Security model
 
@@ -512,11 +587,11 @@ When a growth is intentional, regenerate `.tare/baseline.json` on the accepted s
 
 Exit codes:
 
-| Code | Meaning |
-|---:|---|
-| `0` | Diff completed and thresholds passed, or no thresholds were set. |
-| `1` | A configured regression threshold was exceeded. |
-| `2` | Invalid usage or invalid input, including missing files, invalid JSON, or missing report fields. |
+| Code | Meaning                                                                                          |
+| ---: | ------------------------------------------------------------------------------------------------ |
+|  `0` | Diff completed and thresholds passed, or no thresholds were set.                                 |
+|  `1` | A configured regression threshold was exceeded.                                                  |
+|  `2` | Invalid usage or invalid input, including missing files, invalid JSON, or missing report fields. |
 
 Estimates are still estimates. The value of the baseline workflow is consistency: the same tool estimates are compared over time, so accidental MCP bloat becomes visible during review.
 
@@ -657,15 +732,23 @@ Options:
 
 ## Roadmap
 
+v0.3:
+
+- [x] Programmatic API for running agents through `measureTools()`
+- [x] Programmatic JSON reports compatible with `tare-mcp diff`
+
 v0.2:
+
 - [x] PR diff/regression mode for JSON reports
 - [x] Threshold flags for token, tool, server, and overlap growth
 
 Next:
+
 - [ ] Per-tool schema breakdown
 - [ ] Context budget config file (`tare.config.json`)
 
 Later:
+
 - [ ] Better SSE fallback
 - [ ] Improved Claude local token estimator
 - [ ] Opt-in API-backed token counting improvements
@@ -674,7 +757,7 @@ Later:
 - [ ] MCP profile generator
 - [ ] `tare-mcp --fix` to generate lean MCP profiles
 
-Dashboards, profile generation, and auto-fix are intentionally not part of v0.2.
+Dashboards, profile generation, and auto-fix are intentionally not part of v0.3.
 
 ## License
 
