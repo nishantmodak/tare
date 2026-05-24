@@ -68,6 +68,19 @@ function normalizeRawOptions(rawOptions: unknown): unknown {
   };
 }
 
+function mergeDiffRawOptions(rawOptions: unknown, rootOptions: unknown): unknown {
+  const raw =
+    rawOptions && typeof rawOptions === "object" ? (rawOptions as Record<string, unknown>) : {};
+  const root =
+    rootOptions && typeof rootOptions === "object" ? (rootOptions as Record<string, unknown>) : {};
+
+  return {
+    ...raw,
+    json: raw.json === true || root.json === true,
+    tokenizer: raw.tokenizer ?? root.tokenizer
+  };
+}
+
 function status(message: string): void {
   process.stderr.write(`${message}\n`);
 }
@@ -318,11 +331,14 @@ export function createProgram(): Command {
     )
     .option(
       "--tokenizer <name>",
-      "Tokenizer for --max-token-increase: claude or openai. Default: claude.",
-      "claude"
+      "Tokenizer for --max-token-increase: claude or openai. Default: claude."
     )
     .action(async (baseArg: string | undefined, headArg: string | undefined, options: unknown) => {
-      const exitCode = await runDiff(baseArg, headArg, options);
+      const exitCode = await runDiff(
+        baseArg,
+        headArg,
+        mergeDiffRawOptions(options, program.opts())
+      );
       process.exitCode = exitCode;
     });
 
