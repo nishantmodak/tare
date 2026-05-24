@@ -579,6 +579,7 @@ npx tare-mcp --no-exec --json
 ## Publishing to npm
 
 This repository includes [`.github/workflows/publish-npm.yml`](.github/workflows/publish-npm.yml).
+Maintainers should use the [release checklist](https://github.com/nishantmodak/tare-mcp/blob/main/docs/releasing.md).
 
 To publish from GitHub Actions:
 
