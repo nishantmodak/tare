@@ -81,7 +81,7 @@ function toToolDefinition(tool: McpToolInput): McpToolDefinition {
   return {
     name: tool.name,
     description: tool.description,
-    inputSchema: tool.inputSchema,
+    inputSchema: tool.inputSchema ?? tool.input_schema,
     annotations: tool.annotations,
     outputSchema: tool.outputSchema,
     metadata: tool.metadata

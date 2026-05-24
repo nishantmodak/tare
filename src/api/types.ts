@@ -4,6 +4,7 @@ export type McpToolInput = {
   name: string;
   description?: string;
   inputSchema?: unknown;
+  input_schema?: unknown;
   annotations?: unknown;
   outputSchema?: unknown;
   metadata?: unknown;

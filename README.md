@@ -114,6 +114,21 @@ console.log(
 
 `measureTools()` returns the same `TareReport` shape as CLI JSON output, so reports can be logged, stored, or compared later with `tare-mcp diff`.
 
+`measureTools()` accepts both MCP-style `inputSchema` and Claude-style `input_schema` fields, which keeps runtime integrations thin:
+
+```ts
+const claudeTools = mcpClient.getClaudeTools();
+
+const report = await measureTools(
+  claudeTools.map((tool) => ({
+    server: tool.server ?? "agent",
+    name: tool.name,
+    description: tool.description,
+    input_schema: tool.input_schema
+  }))
+);
+```
+
 For multiple MCP servers, add `server` per tool so overlap warnings and per-server totals remain useful:
 
 ```ts
@@ -160,6 +175,8 @@ logger.info("mcp.tool_surface", {
   budget_exceeded: report.metadata.budgetExceeded ?? false
 });
 ```
+
+Integration reference: [Last9](https://last9.io/) is integrating `tare-mcp` under its MCP client to log `mcp.tool_surface` at agent startup. See [last9/ai#143](https://github.com/last9/ai/pull/143).
 
 The programmatic API is local-first. It does not read config files, spawn MCP servers, or call cloud tokenization APIs by default. API-backed Claude token counting is opt-in:
 

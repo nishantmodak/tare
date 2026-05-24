@@ -250,6 +250,22 @@ describe("measureTools", () => {
     );
   });
 
+  it("accepts Claude-style input_schema tool definitions", async () => {
+    const withoutSchema = await measureTools([{ name: "search_code", description: "Search code" }]);
+    const withClaudeSchema = await measureTools([
+      {
+        name: "search_code",
+        description: "Search code",
+        input_schema: searchSchema
+      }
+    ]);
+
+    expect(withClaudeSchema.servers[0]?.tools[0]?.hasInputSchema).toBe(true);
+    expect(withClaudeSchema.summary.estimatedTokens.claude).toBeGreaterThan(
+      withoutSchema.summary.estimatedTokens.claude
+    );
+  });
+
   it("includes token warning fallback when API mode is requested without a key", async () => {
     const report = await measureTools([tool("search_code", "Search code")], {
       claudeTokenizerMode: "api"
