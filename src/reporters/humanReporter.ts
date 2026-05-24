@@ -112,7 +112,11 @@ export function renderHumanReport(report: TareReport): string {
     }
   }
 
-  const insufficientServers = report.servers.filter((server) => server.inspectionMode !== "live");
+  const insufficientServers = report.servers.filter(
+    (server) =>
+      server.inspectionMode === "static-insufficient" ||
+      server.inspectionMode === "fallback-static-insufficient"
+  );
   if (insufficientServers.length > 0) {
     lines.push("");
     lines.push("Insufficient data:");

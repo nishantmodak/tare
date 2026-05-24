@@ -10,6 +10,7 @@ export type AnalyzeOptions = {
   configFiles: number;
   staticOnly: boolean;
   warnings?: string[];
+  inspectionMode?: "live default" | "static-only" | "programmatic";
 };
 
 function windowUsage(tokens: number, window: number): number {
@@ -86,7 +87,7 @@ export async function analyzeServers(
         hasInputSchema: analyzedTool.hasInputSchema
       });
 
-      if (server.inspectionMode === "live") {
+      if (server.inspectionMode === "live" || server.inspectionMode === "programmatic") {
         liveToolsForOverlap.push(analyzedTool);
       }
     }
@@ -147,8 +148,11 @@ export async function analyzeServers(
           openaiCl100k: windowUsage(totalOpenAi, 200000)
         }
       },
-      insufficientServers: analyzedServers.filter((server) => server.inspectionMode !== "live")
-        .length
+      insufficientServers: analyzedServers.filter(
+        (server) =>
+          server.inspectionMode === "static-insufficient" ||
+          server.inspectionMode === "fallback-static-insufficient"
+      ).length
     },
     servers: analyzedServers,
     overlapClusters,
@@ -156,7 +160,8 @@ export async function analyzeServers(
     warnings,
     metadata: {
       staticOnly: options.staticOnly,
-      inspectionMode: options.staticOnly ? "static-only" : "live default"
+      inspectionMode:
+        options.inspectionMode ?? (options.staticOnly ? "static-only" : "live default")
     }
   };
 

@@ -61,13 +61,18 @@ export const TareReportSchema: z.ZodType<TareReport> = z
         .object({
           name: z.string(),
           sourceConfigPath: z.string(),
-          transport: z.enum(["stdio", "streamable-http", "sse", "unknown"]),
+          transport: z.enum(["stdio", "streamable-http", "sse", "programmatic", "unknown"]),
           command: z.string().optional(),
           args: z.array(z.string()).optional(),
           urlHost: z.string().optional(),
           toolCount: z.number(),
           estimatedTokens: TokenTotalsSchema,
-          inspectionMode: z.enum(["live", "static-insufficient", "fallback-static-insufficient"]),
+          inspectionMode: z.enum([
+            "live",
+            "programmatic",
+            "static-insufficient",
+            "fallback-static-insufficient"
+          ]),
           confidence: z.enum(["high", "medium", "low"]),
           warnings: z.array(z.string()),
           tools: z.array(
@@ -96,7 +101,10 @@ export const TareReportSchema: z.ZodType<TareReport> = z
     metadata: z
       .object({
         staticOnly: z.boolean(),
-        inspectionMode: z.enum(["live default", "static-only"])
+        inspectionMode: z.enum(["live default", "static-only", "programmatic"]),
+        budgetExceeded: z.boolean().optional(),
+        budgetTokens: z.number().optional(),
+        budgetTokenizer: z.literal("claude").optional()
       })
       .passthrough()
   })

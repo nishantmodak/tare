@@ -18,6 +18,7 @@ export { createStaticInspection } from "./inspectors/staticInspector.js";
 export { inspectStdioServer, buildServerEnv } from "./inspectors/stdioMcpInspector.js";
 export { inspectStreamableHttpServer } from "./inspectors/streamableHttpMcpInspector.js";
 export { analyzeServers } from "./analysis/analyze.js";
+export { measureTools } from "./api/measureTools.js";
 export { OverlapDetector } from "./analysis/overlapDetector.js";
 export { buildRecommendations } from "./analysis/recommendations.js";
 export { TokenEstimator } from "./tokens/countTokens.js";
@@ -35,6 +36,12 @@ export {
 export { renderDiffJsonReport } from "./reporters/diffJsonReporter.js";
 
 export type { TareReport, OverlapCluster, AnalyzedTool } from "./analysis/types.js";
+export type {
+  AttributedMcpToolInput,
+  McpToolInput,
+  MeasureToolInput,
+  MeasureToolsOptions
+} from "./api/types.js";
 export type { DiffReportsOptions } from "./diff/diffReports.js";
 export type { DiffHumanReporterOptions } from "./reporters/diffHumanReporter.js";
 export type {

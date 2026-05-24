@@ -89,6 +89,9 @@ export type TareReport = {
   warnings: string[];
   metadata: {
     staticOnly: boolean;
-    inspectionMode: "live default" | "static-only";
+    inspectionMode: "live default" | "static-only" | "programmatic";
+    budgetExceeded?: boolean;
+    budgetTokens?: number;
+    budgetTokenizer?: "claude";
   };
 };
