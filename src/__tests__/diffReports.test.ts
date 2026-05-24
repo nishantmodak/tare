@@ -21,6 +21,11 @@ function buildDiff() {
   });
 }
 
+function stripAnsi(input: string): string {
+  const escape = String.fromCharCode(27);
+  return input.replace(new RegExp(`${escape}\\[[0-9;]*m`, "g"), "");
+}
+
 describe("diffReports", () => {
   it("computes added, removed, and changed MCP surfaces", () => {
     const diff = buildDiff();
@@ -145,8 +150,8 @@ describe("diff reporters", () => {
       tokenizer: "claude"
     });
 
-    const output = renderDiffHumanReport(diff, { tokenizer: "claude" });
-    const failure = renderDiffThresholdFailure(diff, { tokenizer: "claude" });
+    const output = stripAnsi(renderDiffHumanReport(diff, { tokenizer: "claude" }));
+    const failure = stripAnsi(renderDiffThresholdFailure(diff, { tokenizer: "claude" }));
 
     expect(output).toContain("--max-token-increase: fail (~1,800 / ~1,000 Claude tokens)");
     expect(output).toContain("--max-tool-increase: fail (3 / 2 tools)");
