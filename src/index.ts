@@ -36,12 +36,7 @@ export {
 export { renderDiffJsonReport } from "./reporters/diffJsonReporter.js";
 
 export type { TareReport, OverlapCluster, AnalyzedTool } from "./analysis/types.js";
-export type {
-  AttributedMcpToolInput,
-  McpToolInput,
-  MeasureToolInput,
-  MeasureToolsOptions
-} from "./api/types.js";
+export type { AttributedMcpToolInput, McpToolInput, MeasureToolsOptions } from "./api/types.js";
 export type { DiffReportsOptions } from "./diff/diffReports.js";
 export type { DiffHumanReporterOptions } from "./reporters/diffHumanReporter.js";
 export type {

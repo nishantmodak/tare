@@ -2,18 +2,15 @@ import { analyzeServers } from "../analysis/analyze.js";
 import type { TareReport } from "../analysis/types.js";
 import type { InspectedServer, McpToolDefinition } from "../inspectors/types.js";
 import { TokenEstimator } from "../tokens/countTokens.js";
-import type {
-  AttributedMcpToolInput,
-  McpToolInput,
-  MeasureToolInput,
-  MeasureToolsOptions
-} from "./types.js";
+import type { AttributedMcpToolInput, McpToolInput, MeasureToolsOptions } from "./types.js";
 
 const DEFAULT_SERVER_NAME = "agent";
 const PROGRAMMATIC_SOURCE = "programmatic";
 
+type MeasureToolInput = McpToolInput | AttributedMcpToolInput;
+
 export async function measureTools(
-  tools: readonly MeasureToolInput[],
+  tools: readonly (McpToolInput | AttributedMcpToolInput)[],
   options: MeasureToolsOptions = {}
 ): Promise<TareReport> {
   validateTools(tools);

@@ -13,8 +13,6 @@ export type AttributedMcpToolInput = McpToolInput & {
   server: string;
 };
 
-export type MeasureToolInput = McpToolInput | AttributedMcpToolInput;
-
 export type MeasureToolsOptions = {
   serverName?: string;
   budget?: number;

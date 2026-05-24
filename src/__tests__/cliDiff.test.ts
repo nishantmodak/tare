@@ -13,6 +13,18 @@ type CliResult = {
 };
 
 describe("tare-mcp diff CLI", () => {
+  it("keeps existing root and diff CLI commands wired", async () => {
+    const rootHelp = await runCli(["--help"]);
+    const diffHelp = await runCli(["diff", "--help"]);
+
+    expect(rootHelp.code).toBe(0);
+    expect(rootHelp.stdout).toContain("Usage: tare-mcp [options]");
+    expect(rootHelp.stdout).toContain("diff");
+    expect(diffHelp.code).toBe(0);
+    expect(diffHelp.stdout).toContain("Usage: tare-mcp diff [options]");
+    expect(diffHelp.stdout).toContain("--max-token-increase");
+  });
+
   it("outputs pure JSON and exits 1 when thresholds fail", async () => {
     const dir = await tempDir();
     try {
