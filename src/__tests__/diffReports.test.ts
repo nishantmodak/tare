@@ -10,6 +10,7 @@ import {
   renderDiffThresholdFailure
 } from "../reporters/diffHumanReporter.js";
 import { renderDiffJsonReport } from "../reporters/diffJsonReporter.js";
+import { VERSION } from "../version.js";
 import { baseReport, headReport } from "./fixtures/diffReportFixtures.js";
 import { tempDir } from "./testUtils.js";
 
@@ -176,6 +177,6 @@ describe("diff reporters", () => {
   it("renders parseable JSON diff reports", () => {
     const parsed = JSON.parse(renderDiffJsonReport(buildDiff())) as TareDiffReport;
 
-    expect(parsed.version).toBe("0.2.0");
+    expect(parsed.version).toBe(VERSION);
   });
 });
