@@ -1,8 +1,8 @@
 # tare-mcp
 
 [![Build](https://github.com/nishantmodak/tare-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/nishantmodak/tare-mcp/actions/workflows/ci.yml)
-[![Version](https://img.shields.io/github/package-json/v/nishantmodak/tare-mcp?label=version)](package.json)
 [![npm](https://img.shields.io/npm/v/tare-mcp?label=npm)](https://www.npmjs.com/package/tare-mcp)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 See what your MCP tools weigh before your agent does anything.
 
