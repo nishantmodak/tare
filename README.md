@@ -1,6 +1,6 @@
 # tare-mcp
 
-[![Build](https://github.com/nishantmodak/tare-mcp/actions/workflows/publish-npm.yml/badge.svg)](https://github.com/nishantmodak/tare-mcp/actions/workflows/publish-npm.yml)
+[![Build](https://github.com/nishantmodak/tare-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/nishantmodak/tare-mcp/actions/workflows/ci.yml)
 [![Version](https://img.shields.io/github/package-json/v/nishantmodak/tare-mcp?label=version)](package.json)
 [![npm](https://img.shields.io/npm/v/tare-mcp?label=npm)](https://www.npmjs.com/package/tare-mcp)
 
