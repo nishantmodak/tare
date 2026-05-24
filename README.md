@@ -3,7 +3,9 @@
 See what your MCP tools weigh before your agent does anything.
 
 ```bash
-npx tare-mcp
+pnpm install
+pnpm build
+node dist/cli.js
 ```
 
 MCP made tools easy to connect.
@@ -29,6 +31,7 @@ but for agent tool context.
 
 - [Why This Matters](#why-this-matters)
 - [Why Token Count Is Not the Whole Problem](#why-token-count-is-not-the-whole-problem)
+- [Current Status](#current-status)
 - [Quickstart](#quickstart)
 - [Hosted MCP Quickstart](#hosted-mcp-quickstart)
 - [Scenario Examples](#scenario-examples)
@@ -67,9 +70,25 @@ If three servers all expose tools that look like "search", the model has to choo
 - what your tools weigh
 - where your tools overlap
 
+## Current status
+
+Current repository version: `0.2.0`.
+
+The CLI is implemented as `tare-mcp`, and the package is configured for npm as `tare-mcp`. Until the first npm release is published, run it from this repository with `node dist/cli.js` after building. Once published, the same commands work through `npx tare-mcp` or an npm install.
+
+Most examples below use `npx tare-mcp` because that is the intended published interface. Before the first npm release, replace `npx tare-mcp` with `node /path/to/tare-mcp/dist/cli.js`.
+
 ## Quickstart
 
-After the package is published:
+Run from source:
+
+```bash
+pnpm install
+pnpm build
+node dist/cli.js
+```
+
+After the npm package is published:
 
 ```bash
 npx tare-mcp
@@ -97,25 +116,23 @@ Context window usage:
 
 If the output is empty or shows "Config files found: 0", see [Config discovery](#config-discovery).
 
-Install it in a project:
+Install it in a project after the npm release:
 
 ```bash
 npm install --save-dev tare-mcp
 npx tare-mcp
 ```
 
-Install it globally:
+Install it globally after the npm release:
 
 ```bash
 npm install --global tare-mcp
 tare-mcp
 ```
 
-For local development from this repository:
+For local development, keep using the source command:
 
 ```bash
-pnpm install
-pnpm build
 pnpm dev
 ```
 
@@ -467,6 +484,8 @@ npx tare-mcp diff \
   --tokenizer openai
 ```
 
+The selected tokenizer applies to threshold math and to the server/tool detail sections in human output. Token values are always rendered as estimates with `~`.
+
 Human output shows new servers, removed servers, largest changes to existing servers, new tools, removed tools, changed tools, and overlap-cluster changes. JSON output is available for automation:
 
 ```bash
@@ -564,7 +583,7 @@ npm publish --access public --provenance
 
 The npm package is named `tare-mcp` because the unscoped `tare` package name is already occupied on npm.
 
-Users can install it with:
+After the first npm release, users can install it with:
 
 ```bash
 npm install --save-dev tare-mcp
@@ -616,7 +635,7 @@ Options:
   --max-tool-increase <tools>        Fail if tool count increase exceeds this value.
   --max-server-increase <servers>    Fail if server count increase exceeds this value.
   --max-overlap-increase <clusters>  Fail if new overlap cluster count exceeds this value.
-  --tokenizer <name>                 Tokenizer for --max-token-increase: claude or openai.
+  --tokenizer <name>                 Tokenizer for --max-token-increase: claude or openai. Default: claude.
 ```
 
 ## Roadmap
