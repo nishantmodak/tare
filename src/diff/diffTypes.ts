@@ -19,10 +19,19 @@ export type TokenDelta = {
   delta: DiffTokenTotals;
 };
 
+export type ValueDelta<T> = {
+  base: T;
+  head: T;
+  changed: boolean;
+};
+
 export type DiffServer = {
   name: string;
   sourceConfigPath: string;
   transport: ReportTransportKind;
+  command?: string;
+  args?: string[];
+  urlHost?: string;
   toolCount: number;
   estimatedTokens: DiffTokenTotals;
   inspectionMode: InspectionMode;
@@ -41,16 +50,13 @@ export type DiffServerChange = {
   name: string;
   toolCount: NumericDelta;
   estimatedTokens: TokenDelta;
-  inspectionMode: {
-    base: InspectionMode;
-    head: InspectionMode;
-    changed: boolean;
-  };
-  confidence: {
-    base: Confidence;
-    head: Confidence;
-    changed: boolean;
-  };
+  transport: ValueDelta<ReportTransportKind>;
+  sourceConfigPath: ValueDelta<string>;
+  command: ValueDelta<string | null>;
+  args: ValueDelta<string[] | null>;
+  urlHost: ValueDelta<string | null>;
+  inspectionMode: ValueDelta<InspectionMode>;
+  confidence: ValueDelta<Confidence>;
 };
 
 export type DiffToolChange = {

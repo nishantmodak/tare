@@ -26,8 +26,17 @@ export { LocalClaudeEstimator } from "./tokens/claudeEstimator.js";
 export { renderHumanReport, renderBudgetFailure } from "./reporters/humanReporter.js";
 export { renderJsonReport } from "./reporters/jsonReporter.js";
 export { loadReport, TareReportSchema, ReportLoadError } from "./diff/loadReport.js";
+export { diffReports, overlapClusterIdentity } from "./diff/diffReports.js";
+export { evaluateDiffThresholds, hasThresholdFailure } from "./diff/thresholds.js";
+export {
+  renderDiffHumanReport,
+  renderDiffThresholdFailure
+} from "./reporters/diffHumanReporter.js";
+export { renderDiffJsonReport } from "./reporters/diffJsonReporter.js";
 
 export type { TareReport, OverlapCluster, AnalyzedTool } from "./analysis/types.js";
+export type { DiffReportsOptions } from "./diff/diffReports.js";
+export type { DiffHumanReporterOptions } from "./reporters/diffHumanReporter.js";
 export type {
   DiffOverlapCluster,
   DiffServer,
@@ -40,7 +49,8 @@ export type {
   NumericDelta,
   TareDiffReport,
   ThresholdResult,
-  TokenDelta
+  TokenDelta,
+  ValueDelta
 } from "./diff/diffTypes.js";
 export type {
   ClaudeTokenizerMode,
