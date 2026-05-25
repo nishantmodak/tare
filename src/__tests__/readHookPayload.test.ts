@@ -32,4 +32,19 @@ describe("readHookPayload", () => {
     const result = await readHookPayload(stream);
     expect(result.sessionId).toBe("");
   });
+
+  it("returns empty sessionId when stdin is a TTY (isTTY branch)", async () => {
+    const stream = Readable.from(["should-not-be-read"]);
+    (stream as unknown as { isTTY: boolean }).isTTY = true;
+    const result = await readHookPayload(stream);
+    expect(result.sessionId).toBe("");
+  });
+
+  it("returns empty sessionId when stream emits an error", async () => {
+    const stream = new Readable({ read() {} });
+    const promise = readHookPayload(stream);
+    stream.destroy(new Error("stream error"));
+    const result = await promise;
+    expect(result.sessionId).toBe("");
+  });
 });

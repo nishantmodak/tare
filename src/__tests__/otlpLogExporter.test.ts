@@ -130,6 +130,35 @@ describe("exportOtlpLogs", () => {
     expect(stderrWrites.some((s) => s.includes("401"))).toBe(true);
   });
 
+  it("handles request timeout (AbortController fires) without throwing", async () => {
+    vi.stubGlobal(
+      "fetch",
+      (_url: string, init: RequestInit) =>
+        new Promise<Response>((_resolve, reject) => {
+          const signal = init?.signal as AbortSignal | undefined;
+          signal?.addEventListener("abort", () => {
+            reject(new DOMException("The operation was aborted.", "AbortError"));
+          });
+        })
+    );
+    const stderrWrites: string[] = [];
+    vi.spyOn(process.stderr, "write").mockImplementation((s) => {
+      stderrWrites.push(s as string);
+      return true;
+    });
+
+    await expect(
+      exportOtlpLogs([makeRecord()], {
+        endpoint: "https://otlp.example.com",
+        headers: {},
+        serviceName: "claude-code",
+        timeoutMs: 10
+      })
+    ).resolves.toBeUndefined();
+
+    expect(stderrWrites.length).toBeGreaterThan(0);
+  });
+
   it("writes warning to stderr on network error and does not throw", async () => {
     vi.stubGlobal("fetch", async () => {
       throw new Error("ECONNREFUSED");
@@ -149,5 +178,27 @@ describe("exportOtlpLogs", () => {
     ).resolves.toBeUndefined();
 
     expect(stderrWrites.some((s) => s.includes("ECONNREFUSED"))).toBe(true);
+  });
+
+  it("handles non-Error thrown value without throwing", async () => {
+    vi.stubGlobal("fetch", async () => {
+      // eslint-disable-next-line @typescript-eslint/only-throw-error
+      throw "string-error";
+    });
+    const stderrWrites: string[] = [];
+    vi.spyOn(process.stderr, "write").mockImplementation((s) => {
+      stderrWrites.push(s as string);
+      return true;
+    });
+
+    await expect(
+      exportOtlpLogs([makeRecord()], {
+        endpoint: "https://otlp.example.com",
+        headers: {},
+        serviceName: "claude-code"
+      })
+    ).resolves.toBeUndefined();
+
+    expect(stderrWrites.some((s) => s.includes("string-error"))).toBe(true);
   });
 });

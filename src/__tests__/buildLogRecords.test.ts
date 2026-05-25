@@ -134,4 +134,30 @@ describe("buildLogRecords", () => {
     const keys = records[0].attributes.map((a) => a.key);
     expect(keys).not.toContain("claude.session_id");
   });
+
+  it("omits claude.session_id from budget_exceeded record when sessionId is empty", () => {
+    const records = buildLogRecords(makeReport(), { sessionId: "", budget: 3000 });
+    const warn = records.find((r) => r.body.stringValue === "mcp.tool_surface.budget_exceeded");
+    expect(warn).toBeDefined();
+    expect(warn!.attributes.map((a) => a.key)).not.toContain("claude.session_id");
+  });
+
+  it("omits claude.session_id from overlap_detected record when sessionId is empty", () => {
+    const report = makeReport({
+      overlapClusters: [
+        {
+          label: "search intent",
+          score: 0.8,
+          reason: "shared search intent",
+          signals: ["intent-heuristic"],
+          tools: [{ server: "a", name: "search" }],
+          recommendation: "Prefer one search surface."
+        }
+      ]
+    });
+    const records = buildLogRecords(report, { sessionId: "" });
+    const warn = records.find((r) => r.body.stringValue === "mcp.tool_surface.overlap_detected");
+    expect(warn).toBeDefined();
+    expect(warn!.attributes.map((a) => a.key)).not.toContain("claude.session_id");
+  });
 });
