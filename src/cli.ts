@@ -27,6 +27,7 @@ import { TokenEstimator } from "./tokens/countTokens.js";
 import type { ClaudeTokenizerMode } from "./tokens/types.js";
 import { expandHome } from "./utils/fs.js";
 import { VERSION } from "./version.js";
+import { runHook } from "./hook/hookCommand.js";
 
 const CliOptionsSchema = z.object({
   noExec: z.boolean().default(false),
@@ -340,6 +341,26 @@ export function createProgram(): Command {
         mergeDiffRawOptions(options, program.opts())
       );
       process.exitCode = exitCode;
+    });
+
+  program
+    .command("hook")
+    .description(
+      [
+        "Emit MCP tool surface telemetry to an OTLP endpoint.",
+        "",
+        "Register as a Claude Code Stop hook in ~/.claude/settings.json.",
+        "Requires OTEL_EXPORTER_OTLP_ENDPOINT to be set.",
+        "",
+        "Env vars:",
+        "  OTEL_EXPORTER_OTLP_ENDPOINT  Base OTLP URL (required)",
+        "  OTEL_EXPORTER_OTLP_HEADERS   Auth headers: key=value,key=value",
+        "  OTEL_SERVICE_NAME            Resource service name (default: claude-code)",
+        "  TARE_HOOK_BUDGET             Token budget for budget_exceeded check"
+      ].join("\n")
+    )
+    .action(async () => {
+      await runHook();
     });
 
   return program;
