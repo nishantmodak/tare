@@ -21,9 +21,10 @@ export async function runHook(): Promise<void> {
 
   const headers = parseOtlpHeaders(process.env.OTEL_EXPORTER_OTLP_HEADERS ?? "");
   const serviceName = process.env.OTEL_SERVICE_NAME ?? "claude-code";
-  const budget = process.env.TARE_HOOK_BUDGET
+  const rawBudget = process.env.TARE_HOOK_BUDGET
     ? parseInt(process.env.TARE_HOOK_BUDGET, 10)
     : undefined;
+  const budget = rawBudget !== undefined && !isNaN(rawBudget) ? rawBudget : undefined;
 
   try {
     const [payload, discovered] = await Promise.all([

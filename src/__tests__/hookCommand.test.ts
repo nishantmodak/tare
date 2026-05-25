@@ -48,7 +48,7 @@ describe("tare-mcp hook CLI", () => {
   });
 
   it("hook exits 0 and warns when OTEL_EXPORTER_OTLP_ENDPOINT is not set", async () => {
-    const env = { ...process.env, NO_COLOR: "1" };
+    const env: NodeJS.ProcessEnv = { ...process.env, NO_COLOR: "1" };
     delete env.OTEL_EXPORTER_OTLP_ENDPOINT;
 
     const cliPath = path.join(import.meta.dirname, "..", "cli.ts");
