@@ -13,6 +13,7 @@ describe("config discovery", () => {
       "/repo/mcp.json",
       "/repo/.cursor/mcp.json",
       "/repo/.vscode/mcp.json",
+      "/home/alice/.claude.json",
       "/home/alice/.claude/mcp.json",
       "/home/alice/.claude/settings.json",
       "/home/alice/.claude/settings.local.json",
@@ -32,6 +33,30 @@ describe("config discovery", () => {
 
       const result = await discoverConfigs(home.path, home.path);
       expect(result.paths).toContain(path.join(home.path, ".claude", "mcp.json"));
+    } finally {
+      await home.cleanup();
+    }
+  });
+
+  it("discovers ~/.claude.json (Claude Code user-level MCPs)", async () => {
+    const home = await tempDir();
+    try {
+      await writeFile(path.join(home.path, ".claude.json"), "{}");
+      const result = await discoverConfigs(home.path, home.path);
+      expect(result.paths).toContain(path.join(home.path, ".claude.json"));
+    } finally {
+      await home.cleanup();
+    }
+  });
+
+  it("discovers plugin MCPs via home glob", async () => {
+    const home = await tempDir();
+    try {
+      const pluginDir = path.join(home.path, ".claude", "plugins", "marketplaces", "my-plugin", ".codex-plugin");
+      await mkdir(pluginDir, { recursive: true });
+      await writeFile(path.join(pluginDir, "mcp.json"), "{}");
+      const result = await discoverConfigs(home.path, home.path);
+      expect(result.paths).toContain(path.join(pluginDir, "mcp.json"));
     } finally {
       await home.cleanup();
     }

@@ -10,7 +10,7 @@ function runCli(args: string[], stdinData?: string): Promise<CliResult> {
   const repoRoot = path.join(import.meta.dirname, "..", "..");
   const child = spawn(process.execPath, ["--import", "tsx", cliPath, ...args], {
     cwd: repoRoot,
-    env: { ...process.env, NO_COLOR: "1" },
+    env: { ...process.env, NO_COLOR: "1", HOME: repoRoot },
     stdio: ["pipe", "pipe", "pipe"]
   });
 
@@ -86,7 +86,8 @@ describe("tare-mcp hook CLI", () => {
           ...process.env,
           NO_COLOR: "1",
           OTEL_EXPORTER_OTLP_ENDPOINT: endpoint,
-          TARE_HOOK_BUDGET: "abc"
+          TARE_HOOK_BUDGET: "abc",
+          HOME: repoRoot
         };
 
         const child = spawn(process.execPath, ["--import", "tsx", cliPath, "hook"], {
