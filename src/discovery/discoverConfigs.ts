@@ -6,11 +6,20 @@ import { expandHome, pathExists } from "../utils/fs.js";
 const LOCAL_CONFIG_PATTERNS = [".mcp.json", "mcp.json", ".cursor/mcp.json", ".vscode/mcp.json"];
 
 const HOME_CONFIG_PATTERNS = [
+  "~/.claude.json",
   "~/.claude/mcp.json",
+  "~/.claude/settings.json",
+  "~/.claude/settings.local.json",
   "~/Library/Application Support/Claude/claude_desktop_config.json",
   "~/.config/Claude/claude_desktop_config.json",
   "~/.config/claude/claude_desktop_config.json",
   "~/.config/tare/mcp.json"
+];
+
+// Glob patterns relative to home for directories that expand dynamically.
+const HOME_GLOB_PATTERNS = [
+  ".claude/plugins/marketplaces/*/.codex-plugin/mcp.json",
+  ".cursor/extensions/*/mcp.json"
 ];
 
 export function getDefaultConfigCandidates(cwd = process.cwd(), home = os.homedir()): string[] {
@@ -47,6 +56,14 @@ export async function discoverConfigs(
     }
   }
 
-  const paths = [...new Set([...localMatches, ...homeMatches])].sort();
+  const homeGlobMatches = await fg(HOME_GLOB_PATTERNS, {
+    cwd: home,
+    absolute: true,
+    onlyFiles: true,
+    dot: true,
+    unique: true
+  });
+
+  const paths = [...new Set([...localMatches, ...homeMatches, ...homeGlobMatches])].sort();
   return { paths, warnings };
 }
