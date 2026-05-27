@@ -2,6 +2,7 @@ import { Command } from "commander";
 import { z } from "zod";
 import { analyzeServers } from "./analysis/analyze.js";
 import { discoverConfigs } from "./discovery/discoverConfigs.js";
+import { discoverSessionServers } from "./discovery/discoverSessionServers.js";
 import { parseConfigFile } from "./discovery/parseConfig.js";
 import { diffReports } from "./diff/diffReports.js";
 import { loadReport, ReportLoadError } from "./diff/loadReport.js";
@@ -142,6 +143,15 @@ async function run(rawOptions: unknown): Promise<number> {
   const inspectedServers: InspectedServer[] = [];
   for (const server of servers) {
     inspectedServers.push(await inspectServer(server, options));
+  }
+
+  const sessionResult = await discoverSessionServers();
+  const seenNames = new Set(inspectedServers.map((s) => s.name));
+  for (const sessionServer of sessionResult.servers) {
+    if (!seenNames.has(sessionServer.name)) {
+      inspectedServers.push(sessionServer);
+      seenNames.add(sessionServer.name);
+    }
   }
 
   const tokenWarnings: string[] = [];
